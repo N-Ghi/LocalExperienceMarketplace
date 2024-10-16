@@ -65,72 +65,77 @@ def get_calendar_service():
     print("Calendar service built successfully.")
     return service
 
-def send_email(user_email, subject, html_content):
-    service = get_gmail_service()
+# def send_email(user_email, subject, html_content):
+#     service = get_gmail_service()
     
-    message = MIMEMultipart()
-    message['to'] = user_email
-    message['subject'] = subject
-    message.attach(MIMEText(html_content, 'html'))
+#     message = MIMEMultipart()
+#     message['to'] = user_email
+#     message['subject'] = subject
+#     message.attach(MIMEText(html_content, 'html'))
     
-    raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
-    message_body = {'raw': raw_message}
+#     raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+#     message_body = {'raw': raw_message}
     
-    try:
-        message = service.users().messages().send(userId='me', body=message_body).execute()
-        print('Message Id: %s' % message['id'])
-        return message
-    except Exception as error:
-        print(f'An error occurred: {error}')
-        return None
+#     try:
+#         message = service.users().messages().send(userId='me', body=message_body).execute()
+#         print('Message Id: %s' % message['id'])
+#         return message
+#     except Exception as error:
+#         print(f'An error occurred: {error}')
+#         return None
     
-def create_calendar_reminder(user_emails, user_location, startdate, user_choice):
-    service = get_calendar_service()
+# def create_calendar_reminder(user_emails, user_location, startdate, user_choice):
+#     service = get_calendar_service()
     
-    try:
-        if user_choice == 'Weekly':
-            recurrence_rule = 'RRULE:FREQ=WEEKLY;INTERVAL=1'
-        elif user_choice == 'Monthly':
-            recurrence_rule = 'RRULE:FREQ=MONTHLY;INTERVAL=1'
-        else:
-            raise ValueError("Invalid recurrence frequency chosen")
-        event = {
-        'summary': 'Trash Pickup Reminder',
-        'location': user_location,
-        'description': 'Reminder: Your trash will be picked up today. Please ensure your trash bins are ready.',
-        'start': {
-            'dateTime': startdate,  # Whole day event start
-            'timeZone': 'Africa/Harare',  # Time zone set to Harare
-        },
-        'end': {
-            'dateTime': startdate,  # Whole day event end
-            'timeZone': 'Africa/Harare',
-        },
-        'recurrence': [
-            recurrence_rule  # Frequency based on user selection
-        ],
-        'attendees': [{'email': email} for email in user_emails],
-        'reminders': {
-            'useDefault': False,
-            'overrides': [
-                {'method': 'email', 'minutes': 24 * 60},  # Reminder 1 day before
-                {'method': 'popup', 'minutes': 60},       # Reminder 1 hour before
-            ],
-        },
-        }
+#     try:
+#         if user_choice == 'Weekly':
+#             recurrence_rule = 'RRULE:FREQ=WEEKLY;INTERVAL=1'
+#         elif user_choice == 'Monthly':
+#             recurrence_rule = 'RRULE:FREQ=MONTHLY;INTERVAL=1'
+#         else:
+#             raise ValueError("Invalid recurrence frequency chosen")
+#         event = {
+#         'summary': 'Trash Pickup Reminder',
+#         'location': user_location,
+#         'description': 'Reminder: Your trash will be picked up today. Please ensure your trash bins are ready.',
+#         'start': {
+#             'dateTime': startdate,  # Whole day event start
+#             'timeZone': 'Africa/Harare',  # Time zone set to Harare
+#         },
+#         'end': {
+#             'dateTime': startdate,  # Whole day event end
+#             'timeZone': 'Africa/Harare',
+#         },
+#         'recurrence': [
+#             recurrence_rule  # Frequency based on user selection
+#         ],
+#         'attendees': [{'email': email} for email in user_emails],
+#         'reminders': {
+#             'useDefault': False,
+#             'overrides': [
+#                 {'method': 'email', 'minutes': 24 * 60},  # Reminder 1 day before
+#                 {'method': 'popup', 'minutes': 60},       # Reminder 1 hour before
+#             ],
+#         },
+#         }
         
-        event = service.events().insert(calendarId='primary', body=event).execute()
-        print('Event created: %s' % (event.get('htmlLink')))
-        return event
+#         event = service.events().insert(calendarId='primary', body=event).execute()
+#         print('Event created: %s' % (event.get('htmlLink')))
+#         return event
 
-    except HttpError as error:
-        print(f'An error occurred: {error}')
+#     except HttpError as error:
+#         print(f'An error occurred: {error}')
 
-def send_email_notification(user_emails, summary, user_location):
-    subject = f"New Reminder Created: {summary}"
-    body = (
-    f"Your reminder for your upcoming trash pickup at {user_location} has been created.\n"
-    f"Summary: {summary}\n"
-)
-    for email in user_emails:
-        send_email(email, subject, body)
+# def send_email_notification(user_emails, summary, user_location):
+#     subject = f"New Reminder Created: {summary}"
+#     body = (
+#     f"Your reminder for your upcoming trash pickup at {user_location} has been created.\n"
+#     f"Summary: {summary}\n"
+# )
+#     for email in user_emails:
+#         send_email(email, subject, body)
+
+if __name__ == '__main__':
+    get_credentials()
+    get_gmail_service()
+    get_calendar_service()
